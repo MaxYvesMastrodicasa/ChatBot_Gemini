@@ -1,5 +1,4 @@
 import { ChangeEventHandler, FC } from "react";
-import { Button } from "./Button.tsx";
 import { SearchInput } from "./SearchInput.tsx";
 
 type IProps = {

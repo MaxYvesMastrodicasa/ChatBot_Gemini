@@ -8,7 +8,7 @@ type IProps = {
 };
 
 const SearchInput: FC<IProps> = (props) => {
-  const { onChange, onClick, value } = props;
+  const { onChange, value } = props;
 
   return (
     <div
@@ -19,7 +19,7 @@ const SearchInput: FC<IProps> = (props) => {
       <input
         type="search"
         className="peer block min-h-[auto] w-full rounded-xl  px-3 py-[0.32rem] leading-[1.6] text-black focus:outline focus:outline-orange-500 hover:outline hover:outline-orange-500"
-        placeholder="Search"
+        placeholder="Message Jarvis"
         aria-label="Search"
         aria-describedby="basic-addon1"
         onChange={onChange}
