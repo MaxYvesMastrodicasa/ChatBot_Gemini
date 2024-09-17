@@ -28,6 +28,30 @@ function App() {
     setSearchInputValue("");
   };
 
+  const handleEditMessage = (index: number, newMessage: string) => {
+    const updatedMessages = [...messages];
+    updatedMessages[index].text = newMessage;
+    setMessages(updatedMessages);
+  };
+
+  const handleDeleteMessage = (index: number) => {
+    const updatedMessages = messages.filter((_, i) => i !== index);
+    setMessages(updatedMessages);
+  };
+
+  const handleResetMessage = async (index: number) => {
+
+    const userMessage = messages[index - 1]?.text;
+
+    if (!userMessage || messages[index].sender !== "jarvis") return;
+
+    const newResponse = await ChatBot(userMessage);
+
+    const updatedMessages = [...messages];
+    updatedMessages[index].text = newResponse;
+    setMessages(updatedMessages);
+  };
+
   return (
     <>
       <div className="flex flex-col h-screen">
@@ -36,8 +60,8 @@ function App() {
             {messages.map((message, index) => (
               <div
                 key={index}
-                className={`flex flex-col mb-3 ${message.sender === "user" ? "items-end" : "items-start"
-                  }`}
+                className={`relative flex flex-col mb-3 ${message.sender === "user" ? "items-end" : "items-start"
+                  } group`}
               >
                 <div className="text-gray-500 text-sm mb-1">
                   {message.sender === "user" ? "Vous" : "Jarvis"}
@@ -46,14 +70,38 @@ function App() {
                   className={`p-2 rounded-lg shadow ${message.sender === "user"
                     ? "bg-orange-500 text-right"
                     : "bg-gray-300 text-left"
-                    } ${message.text.length > 50 ? "max-w-lg" : "max-w-md"} `}
+                    } ${message.text.length > 50 ? "max-w-lg" : "max-w-md"} relative`}
                 >
                   {message.text}
+                  {message.sender === "user" ? (
+                    <div className="absolute top-0 right-0 hidden group-hover:flex space-x-2">
+                      <button
+                        onClick={() => handleEditMessage(index, prompt("Modifier le message :", message.text) || message.text)}
+                        className="bg-gray-900 text-white px-2 py-1 rounded"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteMessage(index)}
+                        className="bg-gray-900 text-white px-2 py-1 rounded"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="absolute top-0 left-0 hidden group-hover:flex">
+                      <button
+                        onClick={() => handleResetMessage(index)}
+                        className="bg-gray-900 text-white px-2 py-1 rounded"
+                      >
+                        Reset
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
           </div>
-          <div />
         </div>
         <div className="w-full mb-3">
           <Navbar
