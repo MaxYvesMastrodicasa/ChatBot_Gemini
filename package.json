@@ -1,11 +1,11 @@
 {
-  "name": "isitech-l2-infra-dev-grp-5",
+  "name": "jarvis",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run build",
+    "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --report-unused-disable-directives --max-warnings=0",
     "format": "prettier --write ./src --list-different",
