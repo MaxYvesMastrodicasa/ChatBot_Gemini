@@ -1,14 +1,24 @@
-import { ChangeEventHandler, FC } from "react";
+import { ChangeEventHandler, FC, KeyboardEventHandler } from "react";
 import { Button } from "./Button.tsx";
 
 type IProps = {
   onClick: () => void;
   onChange: ChangeEventHandler<HTMLInputElement>;
+  onKeyDown: KeyboardEventHandler<HTMLInputElement>;
   value: string;
 };
 
 const SearchInput: FC<IProps> = (props) => {
-  const { onChange, value, onClick } = props;
+  const { onChange, value, onClick, onKeyDown } = props;
+
+  const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (event) => {
+    if (event.key === "Enter") {
+      onClick();
+    }
+    if (onKeyDown) {
+      onKeyDown(event);
+    }
+  };
 
   return (
     <div className="relative flex w-full">
@@ -20,6 +30,7 @@ const SearchInput: FC<IProps> = (props) => {
         aria-describedby="basic-addon1"
         onChange={onChange}
         value={value}
+        onKeyDown={handleKeyDown}
       />
       <div className="basis-1/2 flex justify-center items-center">
         <Button
