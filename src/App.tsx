@@ -17,7 +17,11 @@ function App() {
 
     const response = await ChatBot(searchInputValue);
 
-    setMessages([...messages, `Toi: ${searchInputValue}`, `Bot: ${response}`]);
+    setMessages([
+      ...messages,
+      `Toi: ${searchInputValue}`,
+      `Jarvis: ${response}`,
+    ]);
 
     setSearchInputValue("");
   };

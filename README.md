@@ -48,3 +48,5 @@ export default tseslint.config({
   },
 })
 ```
+
+On ajoute aussi les
