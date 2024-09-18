@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Navbar } from "./components/Navbar";
 import ChatBot from "./AIConnect";
 
@@ -12,10 +12,12 @@ function App() {
     setSearchInputValue(e.target.value);
   };
 
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
   const handleSendMessage = async () => {
     if (searchInputValue.trim() === "") return;
 
-    // Ajouter le message de l'utilisateur avec un type explicite pour 'sender'
+    // Ajouter le message de l'utilisateur
     const newMessages = [
       ...messages,
       { sender: "user" as const, text: searchInputValue },
@@ -31,7 +33,7 @@ function App() {
     // Envoyer tout le contexte à l'API de Gemini
     const response = await ChatBot(conversation);
 
-    // Ajouter la réponse de Jarvis avec un type explicite pour 'sender'
+    // Ajouter la réponse de Jarvis
     setMessages([
       ...newMessages,
       { sender: "jarvis" as const, text: response },
@@ -39,6 +41,17 @@ function App() {
 
     setSearchInputValue("");
   };
+
+  // Fonction pour faire défiler automatiquement vers le bas By ChatGpt
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   return (
     <>
@@ -66,6 +79,7 @@ function App() {
                 </div>
               </div>
             ))}
+            <div ref={messagesEndRef} />
           </div>
         </div>
         <div className="w-full mb-3">
