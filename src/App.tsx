@@ -15,16 +15,26 @@ function App() {
   const handleSendMessage = async () => {
     if (searchInputValue.trim() === "") return;
 
-    // Ajouter le message de l'utilisateur
-    setMessages([...messages, { sender: "user", text: searchInputValue }]);
-
-    const response = await ChatBot(searchInputValue);
-
-    // Ajouter la réponse de Jarvis
-    setMessages([
+    // Ajouter le message de l'utilisateur avec un type explicite pour 'sender'
+    const newMessages = [
       ...messages,
-      { sender: "user", text: searchInputValue },
-      { sender: "jarvis", text: response },
+      { sender: "user" as const, text: searchInputValue },
+    ];
+
+    setMessages(newMessages);
+
+    // Préparer le fil de conversation pour le contexte
+    const conversation = newMessages
+      .map((msg) => `${msg.sender === "user" ? "Vous" : "Jarvis"}: ${msg.text}`)
+      .join("\n");
+
+    // Envoyer tout le contexte à l'API de Gemini
+    const response = await ChatBot(conversation);
+
+    // Ajouter la réponse de Jarvis avec un type explicite pour 'sender'
+    setMessages([
+      ...newMessages,
+      { sender: "jarvis" as const, text: response },
     ]);
 
     setSearchInputValue("");
@@ -57,7 +67,6 @@ function App() {
               </div>
             ))}
           </div>
-          <div />
         </div>
         <div className="w-full mb-3">
           <Navbar
