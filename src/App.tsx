@@ -4,16 +4,18 @@ import ChatBot from "./AIConnect";
 
 function App() {
   const [searchInputValue, setSearchInputValue] = useState("");
-  const [messages, setMessages] = useState<{ sender: "user" | "jarvis"; text: string }[]>([]);
-  const [editingMessageIndex, setEditingMessageIndex] = useState<number | null>(null);
+  const [messages, setMessages] = useState<
+    { sender: "user" | "jarvis"; text: string }[]
+  >([]);
+  const [editingMessageIndex, setEditingMessageIndex] = useState<number | null>(
+    null
+  );
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInputValue(e.target.value);
   };
-
-  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const handleSendMessage = async () => {
     if (searchInputValue.trim() === "") return;
@@ -31,22 +33,20 @@ function App() {
 
       // Préparer le fil de conversation
       const conversation = newMessages
-        .map((msg) => `${msg.sender === "user" ? "Vous" : "Jarvis"}: ${msg.text}`)
+        .map(
+          (msg) => `${msg.sender === "user" ? "Vous" : "Jarvis"}: ${msg.text}`
+        )
         .join("\n");
 
       // Envoyer à l'API et obtenir la réponse
       const response = await ChatBot(conversation);
 
       // Ajouter la réponse de Jarvis avec typage strict
-      setMessages([
-        ...newMessages,
-        { sender: "jarvis", text: response },
-      ]);
+      setMessages([...newMessages, { sender: "jarvis", text: response }]);
     }
 
     setSearchInputValue(""); // Réinitialiser l'input après l'envoi
   };
-
 
   const handleEditMessage = async (index: number, newMessage: string) => {
     const updatedMessages = [...messages];
@@ -54,22 +54,27 @@ function App() {
 
     updatedMessages[index].text = newMessage;
 
-
     const newResponse = await ChatBot(newMessage);
 
-
-    if (updatedMessages[originalJarvisIndex] && updatedMessages[originalJarvisIndex].sender === "jarvis") {
+    if (
+      updatedMessages[originalJarvisIndex] &&
+      updatedMessages[originalJarvisIndex].sender === "jarvis"
+    ) {
       updatedMessages[originalJarvisIndex].text = newResponse;
     } else {
-
-      updatedMessages.splice(originalJarvisIndex, 0, { sender: "jarvis", text: newResponse });
+      updatedMessages.splice(originalJarvisIndex, 0, {
+        sender: "jarvis",
+        text: newResponse,
+      });
     }
 
     setMessages(updatedMessages);
   };
 
   const handleDeleteMessage = (index: number) => {
-    const updatedMessages = messages.filter((_, i) => i !== index && i !== index + 1);
+    const updatedMessages = messages.filter(
+      (_, i) => i !== index && i !== index + 1
+    );
     setMessages(updatedMessages);
   };
 
@@ -109,17 +114,19 @@ function App() {
             {messages.map((message, index) => (
               <div
                 key={index}
-                className={`relative flex flex-col mb-3 ${message.sender === "user" ? "items-end" : "items-start"
-                  } group`}
+                className={`relative flex flex-col mb-3 ${
+                  message.sender === "user" ? "items-end" : "items-start"
+                } group`}
               >
                 <div className="text-gray-500 text-sm mb-1">
                   {message.sender === "user" ? "Vous" : "Jarvis"}
                 </div>
                 <div
-                  className={`p-2 rounded-lg shadow ${message.sender === "user"
-                    ? "bg-orange-500 text-right"
-                    : "bg-gray-300 text-left"
-                    } ${message.text.length > 50 ? "max-w-lg" : "max-w-md"} relative`}
+                  className={`p-2 rounded-lg shadow ${
+                    message.sender === "user"
+                      ? "bg-orange-500 text-right"
+                      : "bg-gray-300 text-left"
+                  } ${message.text.length > 50 ? "max-w-lg" : "max-w-md"} relative`}
                 >
                   {message.text}
                 </div>
@@ -130,13 +137,21 @@ function App() {
                         onClick={() => handleStartEditMessage(index)}
                         className="p-2 rounded"
                       >
-                        <img src="/editer.png" alt="Éditer" className="h-5 w-5" />
+                        <img
+                          src="/editer.png"
+                          alt="Éditer"
+                          className="h-5 w-5"
+                        />
                       </button>
                       <button
                         onClick={() => handleDeleteMessage(index)}
                         className="p-2 rounded"
                       >
-                        <img src="/poubelle.png" alt="Supprimer" className="h-5 w-5" />
+                        <img
+                          src="/poubelle.png"
+                          alt="Supprimer"
+                          className="h-5 w-5"
+                        />
                       </button>
                     </>
                   ) : (
@@ -144,7 +159,11 @@ function App() {
                       onClick={() => handleResetMessage(index)}
                       className="p-2 rounded"
                     >
-                      <img src="/recharger.png" alt="Recharger" className="h-5 w-5" />
+                      <img
+                        src="/recharger.png"
+                        alt="Recharger"
+                        className="h-5 w-5"
+                      />
                     </button>
                   )}
                 </div>
