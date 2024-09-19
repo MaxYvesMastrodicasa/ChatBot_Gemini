@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Navbar } from "./components/Navbar";
 import ChatBot from "./AIConnect";
 
@@ -7,6 +7,8 @@ function App() {
   const [messages, setMessages] = useState<{ sender: "user" | "jarvis"; text: string }[]>([]);
   const [editingMessageIndex, setEditingMessageIndex] = useState<number | null>(null);
 
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInputValue(e.target.value);
   };
@@ -14,25 +16,35 @@ function App() {
   const handleSendMessage = async () => {
     if (searchInputValue.trim() === "") return;
 
+    // Si c'est une édition
     if (editingMessageIndex !== null) {
-
       await handleEditMessage(editingMessageIndex, searchInputValue);
       setEditingMessageIndex(null);
     } else {
-
-      setMessages([...messages, { sender: "user", text: searchInputValue }]);
-
-      const response = await ChatBot(searchInputValue);
-
-      setMessages([
+      // Crée un nouveau message utilisateur avec typage strict
+      const newMessages: { sender: "user" | "jarvis"; text: string }[] = [
         ...messages,
         { sender: "user", text: searchInputValue },
+      ];
+
+      // Préparer le fil de conversation
+      const conversation = newMessages
+        .map((msg) => `${msg.sender === "user" ? "Vous" : "Jarvis"}: ${msg.text}`)
+        .join("\n");
+
+      // Envoyer à l'API et obtenir la réponse
+      const response = await ChatBot(conversation);
+
+      // Ajouter la réponse de Jarvis avec typage strict
+      setMessages([
+        ...newMessages,
         { sender: "jarvis", text: response },
       ]);
     }
 
-    setSearchInputValue("");
+    setSearchInputValue(""); // Réinitialiser l'input après l'envoi
   };
+
 
   const handleEditMessage = async (index: number, newMessage: string) => {
     const updatedMessages = [...messages];
@@ -75,6 +87,17 @@ function App() {
     setSearchInputValue(messages[index].text);
     setEditingMessageIndex(index);
   };
+
+  // Fonction pour faire défiler automatiquement vers le bas By ChatGpt
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   return (
     <>
@@ -125,6 +148,7 @@ function App() {
                 </div>
               </div>
             ))}
+            <div ref={messagesEndRef} />
           </div>
         </div>
         <div className="w-full mb-3">
