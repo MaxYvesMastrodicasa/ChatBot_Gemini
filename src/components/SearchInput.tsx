@@ -26,7 +26,7 @@ const SearchInput: FC<IProps> = (props) => {
         type="search"
         className="peer block min-h-[auto] w-full rounded-xl px-3 py-[0.32rem] leading-[1.6] text-black focus:outline focus:outline-orange-500 hover:outline hover:outline-orange-500"
         placeholder="Ask Jarvis"
-        aria-label="Search"
+        aria-label="Ask Jarvis"
         aria-describedby="basic-addon1"
         onChange={onChange}
         value={value}

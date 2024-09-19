@@ -9,7 +9,7 @@ type IProps = {
 
 const Navbar: FC<IProps> = (props) => {
   const { searchValue, onSearchChange, onSendMessage } = props;
-  const handleKeyDown = () => {};
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => { };
 
   return (
     <div className="fixed bottom-0 bg-stone-800 w-full flex justify-between items-center p-3 text-white">

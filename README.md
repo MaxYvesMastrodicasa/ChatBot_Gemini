@@ -77,6 +77,12 @@ Vous pouvez maintenant accéder à votre application en ouvrant http://localhost
 
 3. **Scroll automatique :** À chaque nouvelle réponse, la zone de chat défile automatiquement vers le bas pour vous montrer les derniers messages sans avoir à faire défiler manuellement.
 
+4. **Boutons de suppression et de modification de message pour l'utilisateur:** Cliquez sur l'icône :
+- D'édition afin de réafficher votre message dans la barre d'input afin de le modifier et de le renvoyer, le message de Jarvis sera modifier également pour répondre à votre nouveau message. 
+- De suppression afin de supprimer votre message, le message de réponse qu'avait renvoyer Jarvis sera disparaîtra également.
+
+5. **Bouton de nouveau message pour Jarvis:** Cliquez sur l'icône de reload afin de pouvoir obtenir un nouveau message de la part de Jarvis si la réponse précédente ne vous plaît pas.
+
 ## Déploiement
 
 Le projet peut être déployé facilement sur Vercel ou n'importe quelle autre plateforme de déploiement compatible avec React. Si vous utilisez Vercel, suivez ces étapes :
