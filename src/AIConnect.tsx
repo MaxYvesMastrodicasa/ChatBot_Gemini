@@ -1,7 +1,6 @@
-import cle from "./cle.ts";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-
-const genAI = new GoogleGenerativeAI(cle as string);
+const apiToken = process.env.GOOGLE_API_KEY;
+const genAI = new GoogleGenerativeAI(apiToken as string);
 
 async function ChatBot(prompt: string): Promise<string> {
   try {
