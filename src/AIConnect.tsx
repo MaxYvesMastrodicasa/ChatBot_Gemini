@@ -1,6 +1,8 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+
 const apiToken = process.env.GOOGLE_API_KEY;
 const genAI = new GoogleGenerativeAI(apiToken as string);
+console.log(apiToken);
 
 async function ChatBot(prompt: string): Promise<string> {
   try {
