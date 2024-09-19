@@ -5,6 +5,7 @@ import ChatBot from "./AIConnect";
 function App() {
   const [searchInputValue, setSearchInputValue] = useState("");
   const [messages, setMessages] = useState<{ sender: "user" | "jarvis"; text: string }[]>([]);
+  const [editingMessageIndex, setEditingMessageIndex] = useState<number | null>(null);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInputValue(e.target.value);
@@ -13,34 +14,52 @@ function App() {
   const handleSendMessage = async () => {
     if (searchInputValue.trim() === "") return;
 
-    // Ajouter le message de l'utilisateur
-    setMessages([...messages, { sender: "user", text: searchInputValue }]);
+    if (editingMessageIndex !== null) {
 
-    const response = await ChatBot(searchInputValue);
+      await handleEditMessage(editingMessageIndex, searchInputValue);
+      setEditingMessageIndex(null);
+    } else {
 
-    // Ajouter la réponse de Jarvis
-    setMessages([
-      ...messages,
-      { sender: "user", text: searchInputValue },
-      { sender: "jarvis", text: response },
-    ]);
+      setMessages([...messages, { sender: "user", text: searchInputValue }]);
+
+      const response = await ChatBot(searchInputValue);
+
+      setMessages([
+        ...messages,
+        { sender: "user", text: searchInputValue },
+        { sender: "jarvis", text: response },
+      ]);
+    }
 
     setSearchInputValue("");
   };
 
-  const handleEditMessage = (index: number, newMessage: string) => {
+  const handleEditMessage = async (index: number, newMessage: string) => {
     const updatedMessages = [...messages];
+    const originalJarvisIndex = index + 1;
+
     updatedMessages[index].text = newMessage;
+
+
+    const newResponse = await ChatBot(newMessage);
+
+
+    if (updatedMessages[originalJarvisIndex] && updatedMessages[originalJarvisIndex].sender === "jarvis") {
+      updatedMessages[originalJarvisIndex].text = newResponse;
+    } else {
+
+      updatedMessages.splice(originalJarvisIndex, 0, { sender: "jarvis", text: newResponse });
+    }
+
     setMessages(updatedMessages);
   };
 
   const handleDeleteMessage = (index: number) => {
-    const updatedMessages = messages.filter((_, i) => i !== index);
+    const updatedMessages = messages.filter((_, i) => i !== index && i !== index + 1);
     setMessages(updatedMessages);
   };
 
   const handleResetMessage = async (index: number) => {
-
     const userMessage = messages[index - 1]?.text;
 
     if (!userMessage || messages[index].sender !== "jarvis") return;
@@ -50,6 +69,11 @@ function App() {
     const updatedMessages = [...messages];
     updatedMessages[index].text = newResponse;
     setMessages(updatedMessages);
+  };
+
+  const handleStartEditMessage = (index: number) => {
+    setSearchInputValue(messages[index].text);
+    setEditingMessageIndex(index);
   };
 
   return (
@@ -73,30 +97,30 @@ function App() {
                     } ${message.text.length > 50 ? "max-w-lg" : "max-w-md"} relative`}
                 >
                   {message.text}
+                </div>
+                <div className="flex justify-end mt-2 space-x-2">
                   {message.sender === "user" ? (
-                    <div className="absolute top-0 right-0 hidden group-hover:flex space-x-2">
+                    <>
                       <button
-                        onClick={() => handleEditMessage(index, prompt("Modifier le message :", message.text) || message.text)}
-                        className="bg-gray-900 text-white px-2 py-1 rounded"
+                        onClick={() => handleStartEditMessage(index)}
+                        className="p-2 rounded"
                       >
-                        Edit
+                        <img src="/editer.png" alt="Éditer" className="h-5 w-5" />
                       </button>
                       <button
                         onClick={() => handleDeleteMessage(index)}
-                        className="bg-gray-900 text-white px-2 py-1 rounded"
+                        className="p-2 rounded"
                       >
-                        Delete
+                        <img src="/poubelle.png" alt="Supprimer" className="h-5 w-5" />
                       </button>
-                    </div>
+                    </>
                   ) : (
-                    <div className="absolute top-0 left-0 hidden group-hover:flex">
-                      <button
-                        onClick={() => handleResetMessage(index)}
-                        className="bg-gray-900 text-white px-2 py-1 rounded"
-                      >
-                        Reset
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => handleResetMessage(index)}
+                      className="p-2 rounded"
+                    >
+                      <img src="/recharger.png" alt="Recharger" className="h-5 w-5" />
+                    </button>
                   )}
                 </div>
               </div>
